@@ -1,0 +1,29 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+require dirname(__DIR__) . '/vendor/autoload.php';
+
+use LaravelIntegrity\ReachabilityAnalyzer;
+use LaravelIntegrity\ReachabilityExceptions;
+use LaravelIntegrity\ReachabilityRatchet;
+
+$options = getopt('', ['root:', 'exceptions:', 'baseline:']);
+foreach (['root', 'exceptions', 'baseline'] as $required) {
+    if (!isset($options[$required]) || !is_string($options[$required])) {
+        fwrite(STDERR, "Usage: laravel-integrity --root=/path/to/project --exceptions=exceptions.json --baseline=baseline.json\n");
+        exit(64);
+    }
+}
+
+try {
+    $exceptions = ReachabilityExceptions::fromFile($options['exceptions']);
+    ReachabilityRatchet::fromFile($options['baseline'])->assertWithin($exceptions);
+    $result = (new ReachabilityAnalyzer())->analyze($options['root'], $exceptions);
+    echo json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n";
+    exit($result['unreachable'] === [] && $result['stale_exceptions'] === [] ? 0 : 1);
+} catch (Throwable $error) {
+    fwrite(STDERR, $error->getMessage() . "\n");
+    exit(2);
+}
