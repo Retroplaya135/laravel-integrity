@@ -1,0 +1,13 @@
+{
+  "name": "retroplaya135/laravel-integrity",
+  "description": "Static reachability analysis and exception ratcheting for Laravel applications",
+  "type": "library",
+  "license": "MIT",
+  "require": {"php": ">=8.4 <9.0"},
+  "autoload": {"psr-4": {"LaravelIntegrity\\": "src/"}},
+  "bin": ["bin/laravel-integrity"],
+  "scripts": {
+    "test": "php tests/run.php",
+    "lint": "find src tests bin -name '*.php' -print0 | xargs -0 -n1 php -l"
+  }
+}
