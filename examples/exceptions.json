@@ -1,0 +1,6 @@
+{
+  "app/Legacy/UnwiredService.php": {
+    "reason": "Migration fixture retained until the next compatibility window",
+    "debt": true
+  }
+}
